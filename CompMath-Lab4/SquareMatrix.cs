@@ -3,7 +3,6 @@
     public struct SquareMatrix
     {
         private readonly IEnumerable<IEnumerable<double>> _matrix;
-        private readonly int _size;
 
         public SquareMatrix(IEnumerable<IEnumerable<double>> matrix)
         {
@@ -14,13 +13,12 @@
             }
 
             _matrix = matrix;
-            _size = n;
         }
 
         public SquareMatrix GetInverse()
         {
-            int m = _size * 2;
-            int n = _size;
+            int n = _matrix.Count();
+            int m = n * 2;
             double[][] matrix = _matrix
                 .Select((row, i) => row
                     .Concat(Enumerable.Repeat(0.0, i))
@@ -56,7 +54,7 @@
 
         public static Vector operator *(SquareMatrix matrix, Vector vector)
         {
-            if (matrix._size != vector.Length)
+            if (matrix._matrix.Count() != vector.Length)
             {
                 throw new ArgumentException("Sizes of matrix and vector are not equal");
             }

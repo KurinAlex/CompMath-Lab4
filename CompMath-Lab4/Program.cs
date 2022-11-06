@@ -41,24 +41,23 @@ namespace Program
             using (StreamWriter fileWriter = new(OutputFileName))
             {
                 Writer writer = new(fileWriter);
-
                 try
                 {
-                    Vector x;
+                    var methodsData = new (IMethod, Vector)[]
+                    {
+                        (new FixedPointMethod(writer, new[] { f11, f12 }, new[] { mapping1, mapping2 }), fixedPointMethodStartVector),
+                        (new NewtonMethod(writer, f21Data, f22Data), newtonMethodStartVector)
+                    };
 
-                    writer.WriteLine("Fixed-point method:");
-                    writer.WriteDivider();
-                    x = FixedPointMethod.Solve(writer, fixedPointMethodStartVector, Error, new[] { f11, f12 }, new[] { mapping1, mapping2 });
-                    writer.WriteLine("X:");
-                    writer.WriteLine(x);
-                    writer.WriteDivider();
-
-                    writer.WriteLine("Newton method:");
-                    writer.WriteDivider();
-                    x = NewtonMethod.Solve(writer, newtonMethodStartVector, Error, f21Data, f22Data);
-                    writer.WriteLine("X:");
-                    writer.WriteLine(x);
-                    writer.WriteDivider();
+                    foreach (var (method, startVector) in methodsData)
+                    {
+                        writer.WriteLine(method.Name);
+                        writer.WriteDivider();
+                        Vector x = method.Solve(startVector, Error);
+                        writer.WriteLine("X:");
+                        writer.WriteLine(x);
+                        writer.WriteDivider();
+                    }
                 }
                 catch (Exception ex)
                 {

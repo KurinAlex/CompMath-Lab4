@@ -9,15 +9,11 @@
 
         public Writer(StreamWriter fileWriter) => _fileWriter = fileWriter;
 
-        public void WriteLine(string? line)
-        {
-            Console.WriteLine(line);
-            _fileWriter.WriteLine(line);
-        }
-
         public void WriteLine(object obj)
         {
-            WriteLine(obj.ToString());
+            string? line = obj.ToString();
+            Console.WriteLine(line);
+            _fileWriter.WriteLine(line);
         }
 
         public void WriteDivider()

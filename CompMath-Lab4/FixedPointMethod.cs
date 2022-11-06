@@ -1,50 +1,63 @@
 ﻿namespace CompMath_Lab4
 {
-    public static class FixedPointMethod
+    public class FixedPointMethod : IMethod
     {
-        public static Vector Solve(Writer writer, Vector start, double error, Function[] functions, Function[] mappings)
+        private readonly IEnumerable<Function> _functions;
+        private readonly IEnumerable<Function> _mappings;
+        private readonly Writer _writer;
+
+        public FixedPointMethod(Writer writer, Function[] functions, Function[] mappings)
         {
-            int variablesCount = start.Length;
-            if (functions.Length != variablesCount)
+            _functions = functions;
+            _mappings = mappings;
+            _writer = writer;
+        }
+
+        public string Name => "Fixed-point";
+
+        public Vector Solve(Vector startVector, double error)
+        {
+            int variablesCount = startVector.Length;
+            if (_functions.Count() != variablesCount)
             {
                 throw new ArgumentException("Number of functions and variables are not equal");
             }
-            if (mappings.Length != variablesCount)
+            if (_mappings.Count() != variablesCount)
             {
                 throw new ArgumentException("Number of mappings and variables are not equal");
             }
 
-            var xOld = start;
-            var xNew = start;
-            Vector functionsValues = new(functions.Select(func => func(start)));
+            var xOld = startVector;
+            var xNew = startVector;
+            Vector functionsValues = new(_functions.Select(func => func(startVector)));
 
-            void Write(string message, int it)
-            {
-                writer.WriteDivider();
-                writer.WriteLine($"{message}:");
-                writer.WriteDivider();
-                writer.WriteLine($"X_{it}:");
-                writer.WriteLine(xNew);
-                writer.WriteDivider();
-                writer.WriteLine($"F(X_{it}):");
-                writer.WriteLine(functionsValues);
-                writer.WriteDivider();
-                writer.WriteLine($"||F(X_{it})||:");
-                writer.WriteLine(functionsValues.Norm);
-                writer.WriteDivider();
-            }
-
-            Write("Start approximation", 0);
+            Write(xNew, functionsValues, "Start approximation", 0);
 
             for (int i = 1; functionsValues.Norm >= error || (xNew - xOld).Norm >= error; i++)
             {
                 xOld = xNew;
-                xNew = new(mappings.Select(f => f(xOld)));
-                functionsValues = new(functions.Select(func => func(xNew)));
+                xNew = new(_mappings.Select(f => f(xOld)));
+                functionsValues = new(_functions.Select(func => func(xNew)));
 
-                Write($"{i} iteration", i);
+                Write(xNew, functionsValues, $"{i} iteration", i);
             }
             return xNew;
+        }
+
+        private void Write(Vector x, Vector functionsValues, string message, int it)
+        {
+            _writer.WriteDivider();
+            _writer.WriteLine($"{message}:");
+            _writer.WriteDivider();
+            _writer.WriteLine($"X_{it}:");
+            _writer.WriteLine(x);
+            _writer.WriteDivider();
+            _writer.WriteLine($"F(X_{it}):");
+            _writer.WriteLine(functionsValues);
+            _writer.WriteDivider();
+            _writer.WriteLine($"||F(X_{it})||:");
+            _writer.WriteLine(functionsValues.Norm);
+            _writer.WriteDivider();
         }
     }
 }

@@ -1,44 +1,39 @@
 ﻿namespace CompMath_Lab4
 {
-    public static class NewtonMethod
+    public class NewtonMethod : IMethod
     {
-        public static Vector Solve(Writer writer, Vector start, double error, params FunctionData[] functionsData)
+        private readonly IEnumerable<FunctionData> _functionsData;
+        private readonly Writer _writer;
+
+        public NewtonMethod(Writer writer, params FunctionData[] functionsData)
         {
-            int variablesCount = start.Length;
-            if (functionsData.Length != variablesCount)
+            _functionsData = functionsData;
+            _writer = writer;
+        }
+
+        public string Name => "Newton";
+
+        public Vector Solve(Vector startVector, double error)
+        {
+            int variablesCount = startVector.Length;
+            if (_functionsData.Count() != variablesCount)
             {
                 throw new ArgumentException("Number of functions and variables are not equal");
             }
-            if (functionsData.Any(d => d.VariablesCount != variablesCount))
+            if (_functionsData.Any(d => d.VariablesCount != variablesCount))
             {
                 throw new ArgumentException("Numbers of variables in functions are not equal");
             }
 
-            var x = start;
-            var functions = functionsData.Select(fd => fd.Function);
-            var derivatives = functionsData.Select(fd => fd.Derivatives);
+            var x = startVector;
+            var functions = _functionsData.Select(fd => fd.Function);
+            var derivatives = _functionsData.Select(fd => fd.Derivatives);
 
-            Vector functionsValues = new(functions.Select(func => func(start)));
-            SquareMatrix derivativesValues = new(derivatives.Select(ders => ders.Select(d => d(start))));
+            Vector functionsValues = new(functions.Select(func => func(startVector)));
+            SquareMatrix derivativesValues = new(derivatives.Select(ders => ders.Select(d => d(startVector))));
             var diff = derivativesValues.GetInverse() * functionsValues;
 
-            void Write(string message, int it)
-            {
-                writer.WriteDivider();
-                writer.WriteLine($"{message}:");
-                writer.WriteDivider();
-                writer.WriteLine($"X_{it}:");
-                writer.WriteLine(x);
-                writer.WriteDivider();
-                writer.WriteLine($"F(X_{it}):");
-                writer.WriteLine(functionsValues);
-                writer.WriteDivider();
-                writer.WriteLine($"||F(X_{it})||:");
-                writer.WriteLine(functionsValues.Norm);
-                writer.WriteDivider();
-            }
-
-            Write("Start approximation", 0);
+            Write(x, functionsValues, "Start approximation", 0);
 
             for (int i = 1; functionsValues.Norm >= error || diff.Norm >= error; i++)
             {
@@ -48,9 +43,25 @@
                 derivativesValues = new(derivatives.Select(ders => ders.Select(d => d(x))));
                 diff = derivativesValues.GetInverse() * functionsValues;
 
-                Write($"{i} iteration", i);
+                Write(x, functionsValues, $"{i} iteration", i);
             }
             return x;
+        }
+
+        private void Write(Vector x, Vector functionsValues, string message, int it)
+        {
+            _writer.WriteDivider();
+            _writer.WriteLine($"{message}:");
+            _writer.WriteDivider();
+            _writer.WriteLine($"X_{it}:");
+            _writer.WriteLine(x);
+            _writer.WriteDivider();
+            _writer.WriteLine($"F(X_{it}):");
+            _writer.WriteLine(functionsValues);
+            _writer.WriteDivider();
+            _writer.WriteLine($"||F(X_{it})||:");
+            _writer.WriteLine(functionsValues.Norm);
+            _writer.WriteDivider();
         }
     }
 }
