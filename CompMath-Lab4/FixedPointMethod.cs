@@ -2,14 +2,24 @@
 {
     public class FixedPointMethod : IMethod
     {
-        private readonly IEnumerable<Function> _functions;
-        private readonly IEnumerable<Function> _mappings;
         private readonly Writer _writer;
 
-        public FixedPointMethod(Writer writer, Function[] functions, Function[] mappings)
+        private const double Alpha = 0.467;
+        private const double Betha = -1.549;
+        private const double B = -0.672;
+        private const double C = 1.042;
+        private const double D = 0.747;
+
+        private static readonly Function f11 = (vector) => Math.Sin(vector[0] + Alpha) + B * vector[1] - C;
+        private static readonly Function f12 = (vector) => vector[0] + Math.Cos(vector[1] + Betha) - D;
+        private static readonly Function mapping1 = (vector) => D - Math.Cos(vector[1] + Betha);
+        private static readonly Function mapping2 = (vector) => (C - Math.Sin(vector[0] + Alpha)) / B;
+
+        private static readonly IEnumerable<Function> _functions = new[] { f11, f12 };
+        private static readonly IEnumerable<Function> _mappings = new[] { mapping1, mapping2 };
+
+        public FixedPointMethod(Writer writer)
         {
-            _functions = functions;
-            _mappings = mappings;
             _writer = writer;
         }
 
