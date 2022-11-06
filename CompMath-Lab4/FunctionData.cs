@@ -6,7 +6,7 @@
     {
         public FunctionData(int variablesCount, Function function, params Function[] derivatives)
         {
-            if(derivatives.Length != variablesCount)
+            if (derivatives.Length != variablesCount)
             {
                 throw new ArgumentException("Number of derivatives and variables are not equal");
             }

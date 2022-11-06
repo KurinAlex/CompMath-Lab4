@@ -18,9 +18,9 @@ namespace CompMath_Lab4
         public override string ToString() =>
             $"({string.Join(", ", _vector.Select(n => n.ToString(CultureInfo.InvariantCulture)))})";
 
-        public static Vector operator-(Vector left, Vector right)
+        public static Vector operator -(Vector left, Vector right)
         {
-            if(left.Length != right.Length)
+            if (left.Length != right.Length)
             {
                 throw new ArgumentException("Vectors sizes are not equal");
             }

@@ -15,7 +15,7 @@ namespace Program
 
         const double Error = 1e-5;
 
-        static readonly double[] fixedPointMethodStart = { 0.8, -0.1 };
+        static readonly double[] fixedPointMethodStart = { 0.84, -0.69 };
         static readonly Vector fixedPointMethodStartVector = new(fixedPointMethodStart);
 
         static readonly Function f11 = (vector) => Math.Sin(vector[0] + Alpha) + B * vector[1] - C;
@@ -23,7 +23,7 @@ namespace Program
         static readonly Function mapping1 = (vector) => D - Math.Cos(vector[1] + Betha);
         static readonly Function mapping2 = (vector) => (C - Math.Sin(vector[0] + Alpha)) / B;
 
-        static readonly double[] newtonMethodStart = { 1, 0 };
+        static readonly double[] newtonMethodStart = { 1.0, 0.4 };
         static readonly Vector newtonMethodStartVector = new(newtonMethodStart);
 
         static readonly Function f21 = (vector) => Math.Tan(vector[0] * vector[1] + Alpha) - vector[0] * vector[0];
@@ -54,7 +54,7 @@ namespace Program
                     writer.WriteDivider();
 
                     writer.WriteLine("Newton method:");
-                    writer.WriteDivider(); 
+                    writer.WriteDivider();
                     x = NewtonMethod.Solve(writer, newtonMethodStartVector, Error, f21Data, f22Data);
                     writer.WriteLine("X:");
                     writer.WriteLine(x);

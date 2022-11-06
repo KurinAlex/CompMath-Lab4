@@ -40,6 +40,7 @@
             {
                 xOld = xNew;
                 xNew = new(mappings.Select(f => f(xOld)));
+                functionsValues = new(functions.Select(func => func(xNew)));
 
                 Write($"{i} iteration", i);
             }
