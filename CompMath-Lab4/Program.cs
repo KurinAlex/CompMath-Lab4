@@ -4,7 +4,7 @@ namespace Program
 {
     public class Program
     {
-        const string OutputFileName = "Result.txt";
+        const string OutputFilePath = @"D:\Sources\University\2 course\CompMath\CompMath-Lab4\Result.txt";
 
         const double Error = 1e-5;
 
@@ -16,7 +16,7 @@ namespace Program
 
         static void Main(string[] args)
         {
-            using (StreamWriter fileWriter = new(OutputFileName))
+            using (StreamWriter fileWriter = new(OutputFilePath))
             {
                 Writer writer = new(fileWriter);
                 try

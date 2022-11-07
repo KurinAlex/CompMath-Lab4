@@ -4,22 +4,6 @@
     {
         private readonly Writer _writer;
 
-        private const double Alpha = 0.467;
-        private const double A = 0.896;
-        private const double B = -0.672;
-
-        private static readonly Function f21 = (vector) => Math.Tan(vector[0] * vector[1] + Alpha) - vector[0] * vector[0];
-        private static readonly Function f21DerivativeX = (vector) => vector[1] * Math.Pow(Math.Cos(vector[0] * vector[1] + Alpha), -2) - 2 * vector[0];
-        private static readonly Function f21DerivativeY = (vector) => vector[0] * Math.Pow(Math.Cos(vector[0] * vector[1] + Alpha), -2);
-        private static readonly FunctionData f21Data = new(2, f21, f21DerivativeX, f21DerivativeY);
-
-        private static readonly Function f22 = (vector) => A * vector[0] * vector[0] + B * vector[1] * vector[1] - 1;
-        private static readonly Function f22DerivativeX = (vector) => 2 * A * vector[0];
-        private static readonly Function f22DerivativeY = (vector) => 2 * B * vector[1];
-        private static readonly FunctionData f22Data = new(2, f22, f22DerivativeX, f22DerivativeY);
-
-        private static readonly IEnumerable<FunctionData> _functionsData = new[] { f21Data, f22Data };
-
         public NewtonMethod(Writer writer)
         {
             _writer = writer;
@@ -30,18 +14,18 @@
         public Vector Solve(Vector startVector, double error)
         {
             int variablesCount = startVector.Length;
-            if (_functionsData.Count() != variablesCount)
+            if (FunctionData.FunctionsData.Count() != variablesCount)
             {
                 throw new ArgumentException("Number of functions and variables are not equal");
             }
-            if (_functionsData.Any(d => d.VariablesCount != variablesCount))
+            if (FunctionData.FunctionsData.Any(d => d.VariablesCount != variablesCount))
             {
                 throw new ArgumentException("Numbers of variables in functions are not equal");
             }
 
             var x = startVector;
-            var functions = _functionsData.Select(fd => fd.Function);
-            var derivatives = _functionsData.Select(fd => fd.Derivatives);
+            var functions = FunctionData.FunctionsData.Select(fd => fd.Function);
+            var derivatives = FunctionData.FunctionsData.Select(fd => fd.Derivatives);
 
             Vector functionsValues = new(functions.Select(func => func(startVector)));
             SquareMatrix derivativesValues = new(derivatives.Select(ders => ders.Select(d => d(startVector))));
