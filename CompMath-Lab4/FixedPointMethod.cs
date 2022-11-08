@@ -11,29 +11,32 @@
 
         public string Name => "Fixed-point";
 
-        public Vector Solve(Vector startVector, double error)
+        public Vector Solve(ICommonTask task, Vector startVector, double error)
         {
             int variablesCount = startVector.Length;
-            if (FunctionData.Functions.Count() != variablesCount)
+            var functions = task.Functions;
+            var mappings = task.Mappings;
+
+            if (functions.Count() != variablesCount)
             {
                 throw new ArgumentException("Number of functions and variables are not equal");
             }
-            if (FunctionData.Mappings.Count() != variablesCount)
+            if (mappings.Count() != variablesCount)
             {
                 throw new ArgumentException("Number of mappings and variables are not equal");
             }
 
             var xOld = startVector;
             var xNew = startVector;
-            Vector functionsValues = new(FunctionData.Functions.Select(func => func(startVector)));
+            Vector functionsValues = new(functions.Select(func => func(startVector)));
 
             Write(xNew, functionsValues, "Start approximation", 0);
 
             for (int i = 1; functionsValues.Norm >= error || (xNew - xOld).Norm >= error; i++)
             {
                 xOld = xNew;
-                xNew = new(FunctionData.Mappings.Select(f => f(xOld)));
-                functionsValues = new(FunctionData.Functions.Select(func => func(xNew)));
+                xNew = new(mappings.Select(f => f(xOld)));
+                functionsValues = new(functions.Select(func => func(xNew)));
 
                 Write(xNew, functionsValues, $"{i} iteration", i);
             }

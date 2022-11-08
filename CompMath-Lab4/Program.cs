@@ -4,7 +4,7 @@ namespace Program
 {
     public class Program
     {
-        const string OutputFilePath = @"D:\Sources\University\2 course\CompMath\CompMath-Lab4\Result.txt";
+        const string OutputFileName = "Result.txt";
 
         const double Error = 1e-5;
 
@@ -16,7 +16,7 @@ namespace Program
 
         static void Main(string[] args)
         {
-            using (StreamWriter fileWriter = new(OutputFilePath))
+            using (StreamWriter fileWriter = new(OutputFileName))
             {
                 Writer writer = new(fileWriter);
                 try
@@ -26,13 +26,14 @@ namespace Program
                         (new FixedPointMethod(writer), fixedPointMethodStartVector),
                         (new NewtonMethod(writer), newtonMethodStartVector)
                     };
+                    ICommonTask task = new CompMath_Lab4.Task();
 
                     foreach (var (method, startVector) in methodsData)
                     {
                         writer.WriteDivider();
                         writer.WriteLine($"{method.Name} method:");
                         writer.WriteDivider();
-                        Vector x = method.Solve(startVector, Error);
+                        Vector x = method.Solve(task, startVector, Error);
                         writer.WriteDivider();
                         writer.WriteLine("X:");
                         writer.WriteLine(x);

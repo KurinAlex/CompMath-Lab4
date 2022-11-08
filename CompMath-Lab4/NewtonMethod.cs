@@ -11,21 +11,23 @@
 
         public string Name => "Newton";
 
-        public Vector Solve(Vector startVector, double error)
+        public Vector Solve(ICommonTask task, Vector startVector, double error)
         {
             int variablesCount = startVector.Length;
-            if (FunctionData.FunctionsData.Count() != variablesCount)
+            var functionsData = task.FunctionsData;
+            var functions = functionsData.Select(fd => fd.Function);
+            var derivatives = functionsData.Select(fd => fd.Derivatives);
+
+            if (functionsData.Count() != variablesCount)
             {
                 throw new ArgumentException("Number of functions and variables are not equal");
             }
-            if (FunctionData.FunctionsData.Any(d => d.VariablesCount != variablesCount))
+            if (functionsData.Any(d => d.VariablesCount != variablesCount))
             {
                 throw new ArgumentException("Numbers of variables in functions are not equal");
             }
 
             var x = startVector;
-            var functions = FunctionData.FunctionsData.Select(fd => fd.Function);
-            var derivatives = FunctionData.FunctionsData.Select(fd => fd.Derivatives);
 
             Vector functionsValues = new(functions.Select(func => func(startVector)));
             SquareMatrix derivativesValues = new(derivatives.Select(ders => ders.Select(d => d(startVector))));

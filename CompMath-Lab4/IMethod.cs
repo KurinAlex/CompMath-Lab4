@@ -3,6 +3,6 @@
     public interface IMethod
     {
         string Name { get; }
-        Vector Solve(Vector startVector, double error);
+        Vector Solve(ICommonTask task, Vector startVector, double error);
     }
 }
